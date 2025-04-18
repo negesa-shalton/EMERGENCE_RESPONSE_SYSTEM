@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Incidence Form</title>
+    {{ form.media }}
+</head>
+<body>
+    <h1>Report an Incidence</h1>
+    <form action="" method="POST" >
+        <!-- CSRF Token -->
+
+        {% csrf_token%}
+        {{ form.as_p }}
+
+        {% comment %} <!-- Name -->
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" maxlength="40" required><br><br>
+
+        <!-- Category -->
+        <label for="category">Category:</label>
+        <select id="category" name="category" required>
+            <option value="fire">Fire</option>
+            <option value="medical">Medical</option>
+            <option value="crime">Crime</option>
+        </select><br><br>
+
+        <!-- Description -->
+        <label for="description">Description:</label>
+        <textarea id="description" name="description" maxlength="200" required></textarea><br><br>
+
+        <!-- Severity -->
+        <label for="severity">Severity:</label>
+        <select id="severity" name="severity" required>
+            <option value="high">High</option>
+            <option value="moderate">Moderate</option>
+        </select><br><br>
+
+        <!-- Image -->
+        <label for="image">Upload Image:</label>
+        <input type="file" id="image" name="image"><br><br>
+
+        <!-- Location -->
+        <label for="location">Location (latitude, longitude):</label>
+        <input type="text" id="location" name="location" placeholder="POINT(longitude latitude)" required><br><br> {% endcomment %}
+
+        <button type="submit">Submit</button>
+    </form>
+</body>
+</html>

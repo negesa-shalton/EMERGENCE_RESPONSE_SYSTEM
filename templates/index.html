@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load leaflet_tags %}
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Health Incident Report System</title>
+  
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  
+  <!-- Google Fonts (Roboto) -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+  
+  {% comment %} <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" /> {% endcomment %}
+
+  <!-- Leaflet CSS & JavaScript -->
+  {% leaflet_css %}
+  {% leaflet_js %}
+
+  <style>
+    body {
+      background-color: #f8f9fa;
+      color: #333;
+      font-family: 'Roboto', sans-serif;
+    }
+
+    .nav-section {
+      background-color: #e9f7ef;
+      border-right: 2px solid #c8e6c9;
+      padding: 20px;
+      box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+      height: 100vh;
+      overflow-y: auto;
+    }
+
+    .nav-section h4 {
+      color: #27ae60;
+      font-weight: bold;
+    }
+
+    .full-height {
+      display: none;
+      height: 100vh;
+      background: white;
+      padding: 20px;
+      overflow-y: auto;
+    }
+
+    .btn-primary {
+      background-color: #27ae60;
+      border: none;
+    }
+
+    .btn-primary:hover {
+      background-color: #218c54;
+    }
+
+    @media (min-width: 769px) {
+      .nav-section {
+        width: 30%;
+        height: 100vh;
+      }
+
+      #map {
+        width: 70%;
+        height: 100vh;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container-fluid">
+    <div class="row">
+      <!-- Navigation Section -->
+      <div class="col-12 col-md-4 nav-section">
+        <h4 class="text-center">Health EMR</h4>
+        <ul class="nav flex-column text-center" id="navLinks">
+          <li class="nav-item">
+            <a class="nav-link" href="#" onclick="openSection('reportForm')">Report Incident</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#" onclick="openSection('history')">Report History</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#" onclick="openSection('reportSummary')">View Report Summary</a>
+          </li>
+        </ul>
+
+        <!-- Incident Report Form -->
+        <div id="reportForm" class="full-height">
+          <h5>Report an Incident</h5>
+          <form action="" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" maxlength="40" required><br>
+        
+            <label for="category">Category:</label>
+            <select id="category" name="category" required>
+                <option value="fire">Fire</option>
+                <option value="medical">Medical</option>
+                <option value="crime">Crime</option>
+            </select><br>
+        
+            <label for="description">Description:</label>
+            <textarea id="description" name="description" maxlength="200" required></textarea><br>
+        
+            <label for="severity">Severity:</label>
+            <select id="severity" name="severity" required>
+                <option value="high">High</option>
+                <option value="moderate">Moderate</option>
+            </select><br>
+        
+            <label for="image">Upload Image:</label>
+            <input type="file" id="image" name="image"><br>
+        
+            <label for="location">Location (latitude, longitude):</label>
+            <input type="text" id="location" name="location" placeholder="POINT(lon lat)" required><br>
+        
+            <button type="submit">Submit</button>
+        </form>
+        </div>
+
+        <!-- Report History -->
+        <div id="history" class="full-height">
+          <h5>Previous Reports</h5>
+          <ul class="list-group">
+            <li class="list-group-item">Medical Emergency - 2025-04-02</li>
+            <li class="list-group-item">Fire Outbreak - 2025-03-28</li>
+            <li class="list-group-item">Road Accident - 2025-03-24</li>
+          </ul>
+          <button type="button" class="btn btn-outline-secondary w-100 mt-2" onclick="closeSection()">Back to Navigation</button>
+        </div>
+
+        <!-- Report Summary -->
+        <div id="reportSummary" class="full-height">
+          <h5>Report Submitted Successfully</h5>
+          <p class="text-success">Thank you! Your report has been submitted successfully. Below is a summary:</p>
+          <div>
+            <p><strong>Type:</strong> <span id="summaryType"></span></p>
+            <p><strong>Description:</strong> <span id="summaryDescription"></span></p>
+            <p><strong>Location:</strong> <span id="summaryLocation"></span></p>
+          </div>
+          <button type="button" class="btn btn-outline-secondary w-100 mt-2" onclick="closeSection()">Back to Navigation</button>
+        </div>
+      </div>
+
+      <!-- Map Section -->
+      <div class="col-12 col-md-8" >
+        {% leaflet_map "map" %}
+        {% comment %} <h1 class="text-center text-muted">Map will go here</h1> {% endcomment %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Script to Handle Navigation -->
+  <script>
+    function openSection(sectionId) {
+      document.getElementById('navLinks').style.display = 'none';
+      document.getElementById('reportForm').style.display = 'none';
+      document.getElementById('history').style.display = 'none';
+      document.getElementById('reportSummary').style.display = 'none';
+      document.getElementById(sectionId).style.display = 'block';
+    }
+
+    function closeSection() {
+      document.getElementById('reportForm').style.display = 'none';
+      document.getElementById('history').style.display = 'none';
+      document.getElementById('reportSummary').style.display = 'none';
+      document.getElementById('navLinks').style.display = 'block';
+    }
+
+    function submitReport(event) {
+      event.preventDefault();
+      const type = document.getElementById('type').value;
+      const description = document.getElementById('description').value;
+      const location = document.getElementById('location').value;
+
+      document.getElementById('summaryType').innerText = type;
+      document.getElementById('summaryDescription').innerText = description;
+      document.getElementById('summaryLocation').innerText = location;
+
+      openSection('reportSummary');
+    }
+  </script>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+  {% comment %} <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script> {% endcomment %}
+  {% comment %} <script>
+    var map = L.map('map').setView([51,-0.9],13);
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+  }).addTo(map);
+  </script> {% endcomment %}
+</body>
+</html>

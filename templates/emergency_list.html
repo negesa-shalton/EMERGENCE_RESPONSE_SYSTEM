@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emergency Incidences</title>
+</head>
+<body>
+    <h1>Emergency Incidences</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Category</th>
+                <th>Severity</th>
+                <th>Description</th>
+                <th>Reported By</th>
+                <th>Timestamp</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for emergency in emergencies %}
+            <tr>
+                <td>{{ emergency.name }}</td>
+                <td>{{ emergency.category }}</td>
+                <td>{{ emergency.severity }}</td>
+                <td>{{ emergency.description }}</td>
+                <td>{{ emergency.reported_by.username }}</td>
+                <td>{{ emergency.timestamp }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6">No emergency incidences found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <br>
+    <a href="{% url 'create_incidence' %}">Report a New Emergency</a>
+</body>
+</html>
