@@ -1,6 +1,6 @@
 import os
 from django.contrib.gis.utils import LayerMapping
-from django.contrib.gis.gdal import Datasource
+from django.contrib.gis.gdal import DataSource
 
 from emergency.models import Health_Facilities
 
@@ -13,7 +13,7 @@ health_facilities_mapping = {
 
 def load_data(verbose=True):
     file = os.getcwd() + "/data/health_facilities_2.gpkg"
-    data_source = Datasource(file)
+    data_source = DataSource(file)
     facilities_layer = data_source[0].name
 
     facilities_layer_mapping = LayerMapping(

@@ -31,7 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-     "jazzmin",
+    "jazzmin",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -39,10 +39,12 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django.contrib.gis",
-    "emergency.apps.EmergencyConfig",
+    # "emergency.apps.EmergencyConfig",
+    "emergency",
     "leaflet",
     "rest_framework",
     "rest_framework_gis",
+    "corsheaders",
 
    
 ]
@@ -50,12 +52,15 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
+
+cors_ALLOW_ALL_ORIGINS = True
 
 ROOT_URLCONF = "EMERGENCE_RESPONSE_SYSTEM.urls"
 
@@ -83,10 +88,10 @@ WSGI_APPLICATION = "EMERGENCE_RESPONSE_SYSTEM.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.contrib.gis.db.backends.postgis",
-        "NAME": "emergence_response",
-        "USER": "negesa_emergence",
-        "PASSWORD": "n3gesa_emergence",
-        "HOST": "127.0.0.1",
+        "NAME": "shalton_emergence",
+        "USER": "shalton_emergence_user",
+        "PASSWORD": "Shalton_3merg3nc3",
+        "HOST": "postgresql-shalton.alwaysdata.net",
         "PORT": "5432",
     }
 }
@@ -128,7 +133,7 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR,'static')
+    os.path.join(BASE_DIR,'static'),
 ]
 STATIC_ROOT = os.path.join(BASE_DIR,)
 
@@ -149,10 +154,12 @@ LEAFLET_CONFIG = {
 
 }
 
-JAZZMIN_SETTINGS = {
-    "site_title": "Emergency Response Admin",
-    "copyright": "Negesa Shalton",
-}
+# JAZZMIN_SETTINGS = {
+#     "site_title": "Emergency Response Admin",
+#     "copyright": "Negesa Shalton",
+# }
 
 LOGIN_REDIRECT_URL = 'home/'
 LOGOUT_REDIRECT_URL = 'registration/login'
+
+# AUTH_USER_MODEL = 'emergency.user'

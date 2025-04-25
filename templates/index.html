@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+{% load static %}
 {% load leaflet_tags %}
 <head>
   <meta charset="UTF-8">
@@ -12,11 +13,14 @@
   <!-- Google Fonts (Roboto) -->
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
   
-  {% comment %} <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" /> {% endcomment %}
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+
+  <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
 
   <!-- Leaflet CSS & JavaScript -->
-  {% leaflet_css %}
+  
   {% leaflet_js %}
+  {% leaflet_css %}
 
   <style>
     body {
@@ -68,6 +72,7 @@
       }
     }
   </style>
+  <script type="text/javascript" src= "{% static 'dist/leaflet.ajax.js' %}"></script>
 </head>
 <body>
   <div class="container-fluid">
@@ -86,6 +91,7 @@
             <a class="nav-link" href="#" onclick="openSection('reportSummary')">View Report Summary</a>
           </li>
         </ul>
+        <button id ="getLocationBtn">Get location</button>
 
         <!-- Incident Report Form -->
         <div id="reportForm" class="full-height">
@@ -146,9 +152,91 @@
       </div>
 
       <!-- Map Section -->
-      <div class="col-12 col-md-8" >
-        {% leaflet_map "map" %}
-        {% comment %} <h1 class="text-center text-muted">Map will go here</h1> {% endcomment %}
+      <div id="map" class="col-12 col-md-8" >
+        
+        
+        <script >
+          {% comment %} var Imagery = L.tileLayer('https://basemap.nationalmap.gov/arcgis/rest/services/USGSImageryOnly/MapServer/tile/{z}/{y}/{x}', {
+            maxZoom: 20,
+            attribution: 'Tiles courtesy of the <a href="https://usgs.gov/">U.S. Geological Survey</a>'
+          }); {% endcomment %}
+
+          var OpenStreetMap = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          });
+          var map = L.map("map",{
+            center: [-3.3973,38.5559],
+            zoom: 13,
+            layers:[OpenStreetMap,]
+          });
+
+          var health_facilities = L.geoJson(null,{
+            pointToLayers: function(feature,latlng){
+              return L.marker(latlng)
+            }
+          });
+
+          map.addLayer(health_facilities)
+          var health_api_url = "api/v1/healthfacilities";
+          $.getJSON(health_api_url,function(data){
+            health_facilities.addData(data)
+          })
+
+          const sendUserCoordinates = (coords) => {
+            fetch('/save-location/',{
+              method: "POST",
+              headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+              },
+              body: JSON.stringify({
+                latitude: coords.latitude,
+                longitude: coords.longitude
+              })
+            })
+          }
+
+          document.addEventListener('DOMContentLoaded',function(){
+            const locationBtn = document.getElementById('getLocationBtn');
+            locationBtn.addEventListener('click',function(){
+              //Check if geolocation is supported
+              if (navigator.geolocation){
+                navigator.geolocation.getCurrentPosition(
+                  //Success Callback
+                  function(position){
+                    //send coordinates to the server via AJAX
+                    console.log(position.coords)
+                    sendUserCoordinates(position.coords)
+                    {% comment %} console.log(position) {% endcomment %}
+                  },
+                  //Error Callback
+                  function(error){
+                    console.log(error)
+                  },
+                //Options
+                  {
+                    enableHighAccuracy: true,
+                    timeout: 50000,
+                    maximumAge: 0
+                  }
+                )
+
+              }
+            })
+          })
+
+          map.on('click',(e) => {
+            let latitude = e.latlng.lat
+            let longitude = e.latlng.lng
+            L.marker([latitude,longitude]).addTo(map)
+            fetch(`/api/v1/healthfacilities?latitude=${latitude}&longitude=${longitude}`).then(response => response.json()).then(result => {
+              console.log(result)
+            })
+          })
+        </script>
+        
+        <h1 class="text-center text-muted">Map will go here</h1>
       </div>
     </div>
   </div>
@@ -186,12 +274,7 @@
 
   <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-  {% comment %} <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script> {% endcomment %}
-  {% comment %} <script>
-    var map = L.map('map').setView([51,-0.9],13);
-    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-  }).addTo(map);
-  </script> {% endcomment %}
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  
 </body>
 </html>

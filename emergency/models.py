@@ -1,9 +1,13 @@
 from django.db import models
 from django.contrib.gis.db import models
-
 from django.contrib.auth.models import User
 
+# from EMERGENCE_RESPONSE_SYSTEM import settings
+
+
+
 # Create your models here.
+############################################
 
 class Incidence(models.Model):
     name = models.CharField(max_length=40,null=True)
@@ -19,11 +23,10 @@ class Incidence(models.Model):
         ('high','High'),
     ], null=True)
     
-    reported_by = models.ForeignKey(User, on_delete=models.CASCADE)
+    reported_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     timestamp = models.DateTimeField(auto_now_add=True)
     image = models.ImageField(upload_to='emergency_images/', blank=True, null=True) 
     location = models.PointField(srid=4326)
-    
 
     class Meta:
         verbose_name_plural = 'Incidences'
@@ -33,13 +36,27 @@ class Incidence(models.Model):
     
 
 class Health_Facilities(models.Model):
-    name = models.CharField(max_length=80)
-    amenity = models.CharField(max_length=80)
-    healthcare = models.CharField(max_length=80)
-    geom = models.MultiPointField(srid=4326)
+    name = models.CharField(max_length=80,null=True)
+    amenity = models.CharField(max_length=80,null=True)
+    healthcare = models.CharField(max_length=80,null=True)
+    geom = models.MultiPointField(srid=4326,null=True)
 
     class Meta:
         verbose_name_plural = 'Health_Facilities'
 
     def __str__(self):
-        return self.name
+        return self.name if self.name else "Unnamed Facility"
+    
+#Creating the location model
+
+class Location(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)#Location
+    latitude = models.DecimalField(max_digits=9, decimal_places=6, null=True)  # Latitude
+    longitude = models.DecimalField(max_digits=9, decimal_places=6, null=True)  # Longitude
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name_plural = "Locations"
+
+    def __str__(self):
+        return self.user.username 

@@ -26,6 +26,6 @@ from EMERGENCE_RESPONSE_SYSTEM import settings
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("emergency/",include('emergency.urls'),name='emergency')
+    path("",include('emergency.urls'),name='emergency')
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

@@ -16,6 +16,8 @@ psycopg2-binary = "~=2.9.10"
 psycopg2 = "~=2.9.10"
 pillow = "~=11.1.0"
 django-jazzmin = "~=3.0.1"
+black = "*"
+geopy = "~=2.4.1"
 
 [dev-packages]
 black = "~=25.1.0"
