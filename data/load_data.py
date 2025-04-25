@@ -12,7 +12,7 @@ health_facilities_mapping = {
 }
 
 def load_data(verbose=True):
-    file = os.getcwd() + "data/health_facilities_2.gpkg"
+    file = os.getcwd() + "/data/health_facilities_2.gpkg"
     data_source = Datasource(file)
     facilities_layer = data_source[0].name
 
