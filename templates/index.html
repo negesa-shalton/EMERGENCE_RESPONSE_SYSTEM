@@ -98,6 +98,9 @@
           <h5>Report an Incident</h5>
           <form action="" method="POST" enctype="multipart/form-data">
             {% csrf_token %}
+
+            <h2>Report Incidents Here</h2>
+            {{ form.as_p }}
             <label for="name">Name:</label>
             <input type="text" id="name" name="name" maxlength="40" required><br>
         

@@ -10,7 +10,6 @@ from django.contrib.auth.models import User
 ############################################
 
 class Incidence(models.Model):
-    name = models.CharField(max_length=40,null=True)
     category = models.CharField(max_length=20, choices=[
         ('fire','Fire'),
         ('medical','Medical'),
@@ -26,13 +25,14 @@ class Incidence(models.Model):
     reported_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     timestamp = models.DateTimeField(auto_now_add=True)
     image = models.ImageField(upload_to='emergency_images/', blank=True, null=True) 
-    location = models.PointField(srid=4326)
+    area_name = models.CharField(max_length=40,null=True)
+    # location = models.PointField(srid=4326)
 
     class Meta:
         verbose_name_plural = 'Incidences'
 
     def __str__(self):
-        return self.name
+        return self.category
     
 
 class Health_Facilities(models.Model):

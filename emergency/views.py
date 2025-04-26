@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from rest_framework import viewsets
 from emergency.forms import IncidenceForm
 from emergency.models import Incidence,Health_Facilities, Location
@@ -12,30 +12,17 @@ def index(request):
 
 # Report Emergency View
 def report_emergency(request):
-    form = IncidenceForm()
-    print(IncidenceForm)
-    # if request.method == 'GET':
-    #     form = IncidenceForm(request.POST)
-    #     # print(IncidenceForm)
-    #     # if form.is_valid():
-    #     #     incidence = Incidence(
-    #     #     name=form.cleaned_data['name'],
-    #     #     category=form.cleaned_data['category'],
-    #     #     description=form.cleaned_data['description'],
-    #     #     severity=form.cleaned_data['severity'],
-    #     #     image=form.cleaned_data['image'],
-    #     #     location=form.cleaned_data['location']
-    #     #     )
-    #     #     incidence.reported_by = request.user  # Ensure this works only if the user is logged in
-    #     #     incidence.save()
-    #     #     # Redirect to emergency list view, not a template path directly
-    #     #     # return redirect('emergency_list')  
-    # else:
-    #     form = IncidenceForm()  # Initialize form if the request is GET or invalid POST
+    if request.method == 'POST':
+        form = IncidenceForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('report_emergency')
+    else:
+        form = IncidenceForm()
     return render(request, 'report_emergency.html', {'form': form})  # Proper context for the template
 
 # Emergency List View
-def emergency_list(request):
+def history(request):
     emergencies = Incidence.objects.all()  # Use `.all()` to fetch all records from the model
     return render(request, 'emergency_list.html', {'emergencies': emergencies})  # Correct context variable name
 

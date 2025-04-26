@@ -33,7 +33,7 @@ urlpatterns = [
     path("",views.index,name='index'),
     path("accounts/", include("django.contrib.auth.urls")),
     path('report_emergency/',views.report_emergency,name='report_emergency'),
-    path('emergency_list/',views.emergency_list,name = 'emergency_list'),
+    path('emergency_list/',views.history,name = 'emergency_list'),
     path('',include(router.urls),name='health_api'),
     path('get_closest_health_facility/',views.closest_health_facility),
     path('save-location/',views.save_location,name='update_location')

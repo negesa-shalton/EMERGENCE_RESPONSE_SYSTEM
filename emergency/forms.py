@@ -2,10 +2,9 @@ from django.contrib.gis import forms  # Correct import for PointField and OSMWid
 from django import forms as django_forms  # Import standard forms under an alias to avoid confusion
 from .models import Incidence
 
-class IncidenceForm(forms.Form):  # Use ModelForm for binding to the model
-    
-    
+class IncidenceForm(forms.ModelForm):  # Use ModelForm for binding to the model
     class Meta:
-        location = forms.PointField()  # Interactive map widget
+        # location = forms.PointField()  # Interactive map widget
         model = Incidence
-        fields = ['name', 'category', 'description', 'severity', 'image', 'location']
+        fields = '__all__'
+       

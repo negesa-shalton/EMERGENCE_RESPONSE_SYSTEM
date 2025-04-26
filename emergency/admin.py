@@ -12,7 +12,7 @@ from leaflet.admin import LeafletGeoAdmin
 
 # @admin.register(Incidence)
 class IncidenceAdmin(LeafletGeoAdmin):
-    list_display = ('name', 'location')
+    list_display = ('category','area_name','severity','description','reported_by')
 
 class HealthFacilitiesAdmin(LeafletGeoAdmin):
     list_display = ('name','healthcare')
